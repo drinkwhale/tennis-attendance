@@ -1,0 +1,73 @@
+<!-- index.html -->
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+</head>
+<body>
+  <button onclick="loginWithKakao()">카카오 로그인</button>
+  <button onclick="markAttendance('attend')">참석</button>
+  <button onclick="markAttendance('absent')">불참</button>
+
+  <ul id="list"></ul>
+
+<script>
+  // Supabase 연결
+  const supabase = supabase.createClient(
+    'https://hcvtqaxlpwasdkyxrhoz.supabase.co', // ⬅️ 본인 Supabase URL
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjdnRxYXhscHdhc2RreXhyaG96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwOTA3MzYsImV4cCI6MjA2NDY2NjczNn0.vFH6eEmZNGti-7w5yamjPHv-ZqiRkSM87QxqLs3R8yk' // ⬅️ Supabase anon 키
+  );
+
+  // 카카오 로그인
+  Kakao.init('YOUR_KAKAO_APP_KEY');
+  let currentUser = null;
+
+  function loginWithKakao() {
+    Kakao.Auth.login({
+      success: function(authObj) {
+        Kakao.API.request({
+          url: '/v2/user/me',
+          success: function(res) {
+            const uid = "kakao_" + res.id;
+            const name = res.kakao_account.profile.nickname;
+            currentUser = { user_id: uid, name: name };
+            alert(name + "님 로그인되었습니다.");
+            fetchList();
+          }
+        });
+      }
+    });
+  }
+
+  // 출결 등록
+  async function markAttendance(status) {
+    if (!currentUser) return alert("로그인 해주세요.");
+
+    const { error } = await supabase
+      .from('attendance')
+      .upsert([{
+        user_id: currentUser.user_id,
+        name: currentUser.name,
+        status: status
+      }], { onConflict: ['user_id'] });
+
+    if (error) alert("에러: " + error.message);
+    else {
+      alert("등록 완료!");
+      fetchList();
+    }
+  }
+
+  // 참석자 목록 가져오기
+  async function fetchList() {
+    const { data } = await supabase
+      .from('attendance')
+      .select('*')
+      .order('updated_at', { ascending: false });
+
+    document.getElementById("list").innerHTML =
+      data.map(d => `<li>${d.name}: ${d.status}</li>`).join("");
+  }
+</script>
+</body>
+</html>
