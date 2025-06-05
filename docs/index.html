@@ -1,73 +1,59 @@
-<!-- index.html -->
-<html>
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>테니스 출석 시스템</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/locale/ko.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isoWeek.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/weekday.js"></script>
   <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 </head>
 <body>
-  <button onclick="loginWithKakao()">카카오 로그인</button>
-  <button onclick="markAttendance('attend')">참석</button>
-  <button onclick="markAttendance('absent')">불참</button>
+  <div class="container">
+    <header>
+      <h1>🎾 테니스 출석 시스템</h1>
+      <div id="user-info">
+        <button id="kakao-login-btn">카카오 로그인</button>
+      </div>
+    </header>
 
-  <ul id="list"></ul>
+    <main>
+      <div id="calendar-controls">
+        <button id="prev-month">이전</button>
+        <span id="current-month"></span>
+        <button id="next-month">다음</button>
+      </div>
 
-<script>
-  // Supabase 연결
-  const supabase = supabase.createClient(
-    'https://hcvtqaxlpwasdkyxrhoz.supabase.co', // ⬅️ 본인 Supabase URL
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjdnRxYXhscHdhc2RreXhyaG96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwOTA3MzYsImV4cCI6MjA2NDY2NjczNn0.vFH6eEmZNGti-7w5yamjPHv-ZqiRkSM87QxqLs3R8yk' // ⬅️ Supabase anon 키
-  );
+      <table id="calendar">
+        <!-- 월간 달력 표 -->
+      </table>
 
-  // 카카오 로그인
-  Kakao.init('YOUR_KAKAO_APP_KEY');
-  let currentUser = null;
+      <section id="attendance-section" style="display:none;">
+        <h2 id="selected-date-title"></h2>
+        <button id="attend-btn">참석</button>
+        <button id="absent-btn">불참</button>
 
-  function loginWithKakao() {
-    Kakao.Auth.login({
-      success: function(authObj) {
-        Kakao.API.request({
-          url: '/v2/user/me',
-          success: function(res) {
-            const uid = "kakao_" + res.id;
-            const name = res.kakao_account.profile.nickname;
-            currentUser = { user_id: uid, name: name };
-            alert(name + "님 로그인되었습니다.");
-            fetchList();
-          }
-        });
-      }
-    });
-  }
+        <h3>✅ 참석자</h3>
+        <ul id="attend-list"></ul>
 
-  // 출결 등록
-  async function markAttendance(status) {
-    if (!currentUser) return alert("로그인 해주세요.");
+        <h3>❌ 불참자</h3>
+        <ul id="absent-list"></ul>
+      </section>
 
-    const { error } = await supabase
-      .from('attendance')
-      .upsert([{
-        user_id: currentUser.user_id,
-        name: currentUser.name,
-        status: status
-      }], { onConflict: ['user_id'] });
+      <section id="admin-section" style="display:none;">
+        <h2>🛠️ 일정 추가 (관리자용)</h2>
+        <form id="event-form">
+          <input type="date" id="event-date" required />
+          <input type="text" id="event-title" placeholder="이벤트 제목" required />
+          <button type="submit">이벤트 추가</button>
+        </form>
+      </section>
+    </main>
+  </div>
 
-    if (error) alert("에러: " + error.message);
-    else {
-      alert("등록 완료!");
-      fetchList();
-    }
-  }
-
-  // 참석자 목록 가져오기
-  async function fetchList() {
-    const { data } = await supabase
-      .from('attendance')
-      .select('*')
-      .order('updated_at', { ascending: false });
-
-    document.getElementById("list").innerHTML =
-      data.map(d => `<li>${d.name}: ${d.status}</li>`).join("");
-  }
-</script>
+  <script src="script.js"></script>
 </body>
 </html>
