@@ -1,5 +1,5 @@
 // Kakao 초기화
-Kakao.init('YOUR_KAKAO_JAVASCRIPT_KEY');
+Kakao.init('e62160e4ae2059a59fcfebbcb1892351');
 
 function loginWithKakao() {
   Kakao.Auth.login({
