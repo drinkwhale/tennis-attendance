@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>일정 추가</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>관리자 일정 등록</h2>
+    <input type="date" id="event-date" />
+    <input type="text" id="event-title" placeholder="제목 입력" />
+    <button onclick="addEvent()">일정 추가</button>
+    <ul id="event-list"></ul>
+  </div>
+
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <script src="script.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

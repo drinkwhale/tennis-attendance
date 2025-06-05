@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>출결 등록</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2 id="date-title">출결 등록</h2>
+    <button onclick="markAttendance('attend')">✅ 참석</button>
+    <button onclick="markAttendance('absent')">❌ 불참</button>
+    <h3>참석자 목록</h3>
+    <ul id="attend-list"></ul>
+  </div>
+
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  <script src="script.js"></script>
+  <script src="attendance.js"></script>
+</body>
+</html>

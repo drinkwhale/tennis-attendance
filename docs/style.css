@@ -1,12 +1,53 @@
 body {
   font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.container {
   max-width: 600px;
   margin: 30px auto;
-  padding: 10px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 button {
+  background-color: #ffeb00;
+  border: none;
+  padding: 10px 20px;
   margin: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 6px;
+}
+
+button:hover {
+  background-color: #ffe000;
+}
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.calendar-day {
   padding: 10px;
-  font-size: 16px;
+  border: 1px solid #ccc;
+  background-color: #fafafa;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.calendar-day:hover {
+  background-color: #e8e8e8;
+}
+
+.event-day {
+  background-color: #d0f0d0;
+  font-weight: bold;
 }
